@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phantom Message Signing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #status {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Sign a Message with Phantom</h1>
+    <button id="connectWallet">Connect to Phantom Wallet</button>
+    <button id="signMessage" disabled>Sign Message</button>
+    <p id="status">Status: Waiting for action...</p>
+
+    <script>
+        // Function to detect the Phantom Wallet provider
+        const getProvider = () => {
+            if ('phantom' in window) {
+                const provider = window.phantom?.solana;
+                if (provider?.isPhantom) {
+                    return provider;
+                }
+            }
+            window.open('https://phantom.app/', '_blank');
+            return null;
+        };
+
+        let provider = null;
+        let publicKey = null;
+
+        // Connect to Phantom Wallet
+        document.getElementById("connectWallet").addEventListener("click", async () => {
+            provider = getProvider();
+            if (!provider) {
+                document.getElementById("status").innerText = "Status: Phantom Wallet not detected.";
+                return;
+            }
+
+            try {
+                const response = await provider.connect();
+                publicKey = response.publicKey.toString();
+                document.getElementById("status").innerText = `Connected to wallet: ${publicKey}`;
+                document.getElementById("signMessage").disabled = false; // Enable the Sign Message button
+            } catch (error) {
+                console.error("Error connecting to Phantom:", error);
+                document.getElementById("status").innerText = "Failed to connect to Phantom.";
+            }
+        });
+
+        // Sign a message
+        document.getElementById("signMessage").addEventListener("click", async () => {
+            if (!provider || !publicKey) {
+                document.getElementById("status").innerText = "Please connect your Phantom Wallet first.";
+                return;
+            }
+
+            const message = "Sign this message to verify your identity.";
+            const encodedMessage = new TextEncoder().encode(message);
+
+            try {
+                const signedMessage = await provider.request({
+                    method: "signMessage",
+                    params: {
+                        message: encodedMessage,
+                        display: "utf8",
+                    },
+                });
+
+                console.log("Signed message:", signedMessage);
+                document.getElementById("status").innerText = "Message signed successfully! Check the console for details.";
+            } catch (error) {
+                console.error("Error signing the message:", error);
+                document.getElementById("status").innerText = "Failed to sign the message.";
+            }
+        });
+    </script>
+</body>
+
+</html>
+
