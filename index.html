@@ -1,110 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phantom Message Signing</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background: #f5f5f5;
-            margin: 0;
-            padding: 20px;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            color: white;
-            background-color: #4CAF50;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-
-        #status {
-            margin-top: 20px;
-            font-size: 18px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAX Token</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+    }
+    .header {
+      background-color: #fff;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .logo {
+      width: 100px;
+      height: auto;
+    }
+    .cta {
+      margin: 10px;
+      padding: 10px 20px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .cta:hover {
+      background-color: #45a049;
+    }
+    .section {
+      padding: 20px;
+      background-color: #ffffff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin: 20px auto;
+      width: 90%;
+      max-width: 800px;
+      border-radius: 8px;
+      text-align: left;
+    }
+    .section h2 {
+      margin-bottom: 10px;
+      color: #333;
+      font-size: 24px;
+    }
+    .details {
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    .details p {
+      margin: 8px 0;
+    }
+    .tokenomics canvas {
+      width: 300px !important;
+      height: 300px !important;
+      margin: 20px auto;
+    }
+    .legend {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    .legend-item {
+      margin-bottom: 10px;
+    }
+    .legend-color {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+      border-radius: 50%;
+    }
+    .footer {
+      background-color: #333;
+      color: white;
+      padding: 20px;
+    }
+    .footer a {
+      color: #4caf50;
+      text-decoration: none;
+    }
+  </style>
 </head>
-
 <body>
-    <h1>Sign a Message with Phantom</h1>
-    <button id="connectWallet">Connect to Phantom Wallet</button>
-    <button id="signMessage" disabled>Sign Message</button>
-    <p id="status">Status: Waiting for action...</p>
+  <header class="header">
+    <img src="https://i.ibb.co/wcSb1Xr/MAX-TOKEN.webp" alt="MAX Token Logo" class="logo">
+    <h1>Welcome to MAX Token</h1>
+    <p>The happiest meme coin on the blockchain!</p>
+    <button class="cta">Buy MAX</button>
+    <button class="cta">View Stats</button>
+    <button class="cta">Connect Wallet</button>
+  </header>
+   
+  <section class="about-token">
+    <h2>ABOUT MAX TOKEN </h2>
+    <p>MAX Token is the happiest crypto dog, spreading joy and wagging tails across the blockchain. Forget the stress - MAX is all about fun and good vibes!</p>
+  </section>
 
-    <script>
-        // Function to detect the Phantom Wallet provider
-        const getProvider = () => {
-            if ('phantom' in window) {
-                const provider = window.phantom?.solana;
-                if (provider?.isPhantom) {
-                    return provider;
-                }
-            }
-            window.open('https://phantom.app/', '_blank');
-            return null;
-        };
+  <section class="section">
+    <h2>Token Details</h2>
+    <div class="details">
+      <p><strong>Token Name:</strong> MAX</p>
+      <p><strong>Total Supply:</strong> 500,000,000,000,000</p>
+      <p><strong>Ticker:</strong> $MAX</p>
+      <p><strong>Contract Address:</strong> <code>0x8A8D55F3a70f7E1ca98c7df52952aD8C8C65CE03</code></p>
+    </div>
+  </section>
 
-        let provider = null;
-        let publicKey = null;
+  <section class="tokenomics">
+    <h2>Tokenomics</h2>
+    <canvas id="tokenomicsChart"></canvas>
+    <div class="legend">
+      <h3>Color Legend:</h3>
+      <div class="legend-item">
+        <span class="legend-color" style="background-color: #e6194b;"></span>
+        <span><strong>Marketing Budget (38%)</strong></span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color" style="background-color: #f58231;"></span>
+        <span><strong>Presale Allocation (30%)</strong></span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color" style="background-color: #ffe119;"></span>
+        <span><strong>DEX/CEX Liquidity (15%)</strong></span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color" style="background-color: #3cb44b;"></span>
+        <span><strong>Developer Team (10%)</strong></span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color" style="background-color: #4363d8;"></span>
+        <span><strong>Treasury (7%)</strong></span>
+      </div>
+    </div>
+  </section>
 
-        // Connect to Phantom Wallet
-        document.getElementById("connectWallet").addEventListener("click", async () => {
-            provider = getProvider();
-            if (!provider) {
-                document.getElementById("status").innerText = "Status: Phantom Wallet not detected.";
-                return;
-            }
+  <footer class="footer">
+    <p>&copy; 2025 MAX Token. All rights reserved.</p>
+    <ul>
+      <li><a href="file:///C:/Users/surac/Downloads/whitepaper.pdf" target="_blank">Whitepaper</a></li>
+      <li><a href="/faqs">FAQs</a></li>
+      <li><a href="/rules">Community Rules</a></li>
+    </ul>
+  </footer>
 
-            try {
-                const response = await provider.connect();
-                publicKey = response.publicKey.toString();
-                document.getElementById("status").innerText = `Connected to wallet: ${publicKey}`;
-                document.getElementById("signMessage").disabled = false; // Enable the Sign Message button
-            } catch (error) {
-                console.error("Error connecting to Phantom:", error);
-                document.getElementById("status").innerText = "Failed to connect to Phantom.";
-            }
-        });
-
-        // Sign a message
-        document.getElementById("signMessage").addEventListener("click", async () => {
-            if (!provider || !publicKey) {
-                document.getElementById("status").innerText = "Please connect your Phantom Wallet first.";
-                return;
-            }
-
-            const message = "Sign this message to verify your identity.";
-            const encodedMessage = new TextEncoder().encode(message);
-
-            try {
-                const signedMessage = await provider.request({
-                    method: "signMessage",
-                    params: {
-                        message: encodedMessage,
-                        display: "utf8",
-                    },
-                });
-
-                console.log("Signed message:", signedMessage);
-                document.getElementById("status").innerText = "Message signed successfully! Check the console for details.";
-            } catch (error) {
-                console.error("Error signing the message:", error);
-                document.getElementById("status").innerText = "Failed to sign the message.";
-            }
-        });
-    </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const ctx = document.getElementById('tokenomicsChart').getContext('2d');
+    const tokenomicsChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: [
+          'Marketing Budget (38%)',
+          'Presale Allocation (30%)',
+          'DEX/CEX Liquidity (15%)',
+          'Developer Team (10%)',
+          'Treasury (7%)'
+        ],
+        datasets: [{
+          data: [38, 30, 15, 10, 7],
+          backgroundColor: ['#e6194b', '#f58231', '#ffe119', '#3cb44b', '#4363d8'],
+          borderColor: '#ffffff',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        cutout: '50%',
+        plugins: {
+          legend: { display: false }
+        }
+      }
+    });
+  </script>
 </body>
-
 </html>
-
